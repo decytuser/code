@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Login / Register</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Poppins", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(120deg, #4f46e5, #9333ea);
+    overflow: hidden;
+    transition: background 1s ease;
+    animation: floatBg 10s infinite alternate ease-in-out;
+  }
+
+  @keyframes floatBg {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+  }
+
+  .theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 1.8rem;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  .theme-toggle:hover { transform: rotate(20deg) scale(1.2); }
+
+  .theme-palette {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    display: none;
+    flex-wrap: wrap;
+    gap: 10px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    padding: 0.6rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+  .theme-color {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.6);
+    transition: transform 0.3s;
+  }
+  .theme-color:hover { transform: scale(1.3) rotate(10deg); }
+
+  .card {
+    background: rgba(255,255,255,0.12);
+    padding: 2rem;
+    border-radius: 1.2rem;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    width: 350px;
+    text-align: center;
+    color: #fff;
+    animation: fadeIn 1s ease, floatCard 6s ease-in-out infinite alternate;
+    position: relative;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes floatCard {
+    from { transform: translateY(0); }
+    to { transform: translateY(-10px); }
+  }
+
+  h2 {
+    margin-bottom: 1.2rem;
+    letter-spacing: 1px;
+    font-size: 1.5rem;
+    text-shadow: 0 0 8px rgba(255,255,255,0.4);
+  }
+
+  input {
+    width: 100%;
+    padding: 0.7rem;
+    margin: 0.4rem 0;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    outline: none;
+    font-size: 0.95rem;
+    transition: 0.4s;
+  }
+
+  input:focus {
+    background: rgba(255,255,255,0.25);
+    box-shadow: 0 0 15px #93c5fd;
+    transform: scale(1.03);
+  }
+
+  button {
+    width: 100%;
+    padding: 0.8rem;
+    margin-top: 0.8rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #fff;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    cursor: pointer;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  button::before {
+    content: "";
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.3);
+    transform: skewX(-20deg);
+    transition: 0.6s;
+  }
+
+  button:hover::before { left: 100%; }
+  button:hover {
+    transform: scale(1.05);
+    background: linear-gradient(90deg, #818cf8, #a78bfa);
+  }
+
+  .switch {
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: #cbd5e1;
+    transition: color 0.3s, transform 0.3s;
+  }
+  .switch:hover {
+    color: #fff;
+    transform: scale(1.1);
+  }
+
+  .hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+  }
+
+  .msg {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    opacity: 0;
+    animation: slideDown 2.5s ease forwards;
+    text-shadow: 0 0 8px rgba(255,255,255,0.3);
+  }
+
+  @keyframes slideDown {
+    0% { opacity: 0; transform: translate(-50%, -40px); }
+    20% { opacity: 1; transform: translate(-50%, 0); }
+    70% { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, -40px); }
+  }
+
+  .shake {
+    animation: shake 0.6s ease;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translate(-50%, 0); }
+    20%, 60% { transform: translate(-50%, -5px); }
+    40%, 80% { transform: translate(-50%, 5px); }
+  }
+</style>
+</head>
+<body>
+  <div class="theme-toggle">🎨</div>
+  <div class="theme-palette" id="palette">
+    <div class="theme-color" data-colors="#4f46e5,#9333ea" style="background:linear-gradient(120deg,#4f46e5,#9333ea)"></div>
+    <div class="theme-color" data-colors="#06b6d4,#3b82f6" style="background:linear-gradient(120deg,#06b6d4,#3b82f6)"></div>
+    <div class="theme-color" data-colors="#ec4899,#f43f5e" style="background:linear-gradient(120deg,#ec4899,#f43f5e)"></div>
+    <div class="theme-color" data-colors="#10b981,#22c55e" style="background:linear-gradient(120deg,#10b981,#22c55e)"></div>
+    <div class="theme-color" data-colors="#f59e0b,#f97316" style="background:linear-gradient(120deg,#f59e0b,#f97316)"></div>
+  </div>
+
+  <div class="card">
+    <h2 id="title">Login</h2>
+
+    <form id="loginForm">
+      <input type="text" id="loginUser" placeholder="Username" required>
+      <input type="password" id="loginPass" placeholder="Password" required>
+      <button type="submit">Login</button>
+      <div class="switch" id="showRegister">Create account</div>
+    </form>
+
+    <form id="registerForm" class="hidden">
+      <input type="text" id="regUser" placeholder="Create username" required>
+      <input type="password" id="regPass" placeholder="Create password" required>
+      <input type="password" id="regConfirm" placeholder="Confirm password" required>
+      <button type="submit">Register</button>
+      <div class="switch" id="showLogin">Back to Login</div>
+    </form>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+    const showRegister = document.getElementById("showRegister");
+    const showLogin = document.getElementById("showLogin");
+    const title = document.getElementById("title");
+    const themeToggle = document.querySelector(".theme-toggle");
+    const palette = document.getElementById("palette");
+
+    // Tema menüsü
+    themeToggle.onclick = () => {
+      palette.style.display = palette.style.display === "flex" ? "none" : "flex";
+    };
+
+    document.querySelectorAll(".theme-color").forEach(c => {
+      c.addEventListener("click", () => {
+        const colors = c.getAttribute("data-colors").split(",");
+        document.body.style.background = `linear-gradient(120deg, ${colors[0]}, ${colors[1]})`;
+        localStorage.setItem("themeColors", JSON.stringify(colors));
+        palette.style.display = "none";
+      });
+    });
+
+    // Son seçilen tema yükle
+    const savedTheme = localStorage.getItem("themeColors");
+    if (savedTheme) {
+      const [c1, c2] = JSON.parse(savedTheme);
+      document.body.style.background = `linear-gradient(120deg, ${c1}, ${c2})`;
+    }
+
+    // Form durumu kaydet / yükle
+    const savedForm = localStorage.getItem("currentForm") || "login";
+    if (savedForm === "register") {
+      loginForm.classList.add("hidden");
+      registerForm.classList.remove("hidden");
+      title.textContent = "Register";
+    }
+
+    showRegister.onclick = () => {
+      loginForm.classList.add("hidden");
+      registerForm.classList.remove("hidden");
+      title.textContent = "Register";
+      localStorage.setItem("currentForm", "register");
+    };
+    showLogin.onclick = () => {
+      registerForm.classList.add("hidden");
+      loginForm.classList.remove("hidden");
+      title.textContent = "Login";
+      localStorage.setItem("currentForm", "login");
+    };
+
+    function showMessage(text, color="#22c55e", shake=false) {
+      const msg = document.createElement("div");
+      msg.className = "msg";
+      if (shake) msg.classList.add("shake");
+      msg.style.background = color;
+      msg.textContent = text;
+      document.body.appendChild(msg);
+      setTimeout(() => msg.remove(), 2500);
+    }
+
+    registerForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const user = regUser.value.trim();
+      const pass = regPass.value;
+      const confirm = regConfirm.value;
+
+      if (pass !== confirm) return showMessage("Passwords do not match!", "#ef4444", true);
+      if (localStorage.getItem(user)) return showMessage("⚠️ This Account Already Exists!", "#ef4444", true);
+
+      localStorage.setItem(user, pass);
+      showMessage("✅ Register successful!");
+      setTimeout(() => (window.location.href = "proje.html"), 1800);
+    });
+
+    loginForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const user = loginUser.value.trim();
+      const pass = loginPass.value;
+      const saved = localStorage.getItem(user);
+      if (!saved) return showMessage("User not found!", "#ef4444", true);
+      if (saved !== pass) return showMessage("Wrong password!", "#ef4444", true);
+      localStorage.setItem("currentUser", user);
+      showMessage("✅ Login successful!");
+      setTimeout(() => (window.location.href = "proje.html"), 1800);
+    });
+  </script>
+</body>
+</html>
